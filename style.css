@@ -1,7 +1,10 @@
 body {
-    background: linear-gradient(125deg, red, green, blue);
+    /* background: linear-gradient(125deg, red, green, blue); */
+    background: url('assets/background.jpg') no-repeat center;
+    background-size: cover;
     width: 100vw;
     height: 100vh;
+    margin: 0;
     overflow: hidden;
 }
 
@@ -13,6 +16,76 @@ canvas {
     height: 100%;
 }
 
+h1 {
+    font-size: 4rem;
+    line-height: 0.95;
+    text-align: center;
+    font-weight: bold;
+    font-family: monospace;
+    margin: 0 0.65em 1em;
+    pointer-events: none;
+    user-select: none;
+    color: #fff;
+    opacity: 0.9;
+    text-shadow: 2px 5px #160e0e;
+}
+
 #collisionCanvas {
     opacity: 0;
+}
+
+#menuMain {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+button {
+    display: block;
+    width: 200px;
+    padding: 12px 20px;
+    background: transparent;
+    position: relative;
+    border: none;
+    font-weight: bold;
+    font-size: 1.5rem;
+    font-family: monospace;
+    color: #fff;
+    opacity: 0.75;
+    text-shadow: 2px 2px #160e0e;
+}
+
+button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.25);
+    transform: scale(0, 0);
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+button:hover {
+    opacity: 1;
+}
+
+button:hover::after {
+    transform: scale(1, 1);
+    opacity: 1;
+}
+
+.credits {
+    position: fixed;
+    color: #fff;
+    opacity: 0.9;
+    bottom: 20px;
 }

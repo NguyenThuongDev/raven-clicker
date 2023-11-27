@@ -1,5 +1,54 @@
 /** @type {HTMLCanvasElement} */
 
+// Game Modes
+const GAME_MODE_RANKED = Symbol('GAME_MODE_RANKED');
+const GAME_MODE_CASUAL = Symbol('GAME_MODE_CASUAL');
+
+// Available Menus
+const MENU_MAIN = Symbol('MENU_MAIN');
+const MENU_PAUSE = Symbol('MENU_PAUSE');
+const MENU_SCORE = Symbol('MENU_SCORE');
+
+const menuMain = document.getElementById('menuMain');
+const playNormalBtn = document.getElementById('playNormal');
+const playCasualBtn = document.getElementById('playCasual');
+
+const state = {
+    game: {
+        mode: GAME_MODE_RANKED,
+        time: 0,
+        score: 0,
+    },
+    menus: {
+        active: MENU_MAIN
+    }
+};
+
+function setGameMode(mode) {
+    state.game.mode = mode;
+}
+
+function setActiveMenu(menu) {
+    state.menus.active = menu;
+    renderMenus();
+}
+
+playNormalBtn.addEventListener('click', () => {
+    setGameMode(GAME_MODE_RANKED);
+    setActiveMenu(null);
+    resetGame();
+});
+
+playCasualBtn.addEventListener('click', () => {
+    setGameMode(GAME_MODE_CASUAL);
+    setActiveMenu(null);
+    resetGame();
+})
+
+/*****************************************************/
+
+
+
 const canvas = document.getElementById('canvas1');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
@@ -17,6 +66,8 @@ let timeToNextRaven = 0;
 let ravenInterval = 500;
 let lastTime = 0;
 let ravens = [];
+let explosions = [];
+let particles = [];
 
 class Raven {
     constructor() {
@@ -67,7 +118,6 @@ class Raven {
     }
 }
 
-let explosions = [];
 class Explosion {
     constructor(x, y, size) {
         this.image = new Image();
@@ -98,7 +148,6 @@ class Explosion {
     }
 }
 
-let particles = [];
 class Particle {
     constructor(x, y, size, color) {
         this.size = size;
@@ -157,7 +206,6 @@ window.addEventListener('click', function (e) {
     });
 })
 
-const raven = new Raven();
 function animate(timeStamp) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     collisionCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
@@ -181,4 +229,4 @@ function animate(timeStamp) {
     else drawGameOver();
 }
 
-animate(0);
+// animate(0);
