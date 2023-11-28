@@ -1,54 +1,5 @@
 /** @type {HTMLCanvasElement} */
 
-// Game Modes
-const GAME_MODE_RANKED = Symbol('GAME_MODE_RANKED');
-const GAME_MODE_CASUAL = Symbol('GAME_MODE_CASUAL');
-
-// Available Menus
-const MENU_MAIN = Symbol('MENU_MAIN');
-const MENU_PAUSE = Symbol('MENU_PAUSE');
-const MENU_SCORE = Symbol('MENU_SCORE');
-
-const menuMain = document.getElementById('menuMain');
-const playNormalBtn = document.getElementById('playNormal');
-const playCasualBtn = document.getElementById('playCasual');
-
-const state = {
-    game: {
-        mode: GAME_MODE_RANKED,
-        time: 0,
-        score: 0,
-    },
-    menus: {
-        active: MENU_MAIN
-    }
-};
-
-function setGameMode(mode) {
-    state.game.mode = mode;
-}
-
-function setActiveMenu(menu) {
-    state.menus.active = menu;
-    renderMenus();
-}
-
-playNormalBtn.addEventListener('click', () => {
-    setGameMode(GAME_MODE_RANKED);
-    setActiveMenu(null);
-    resetGame();
-});
-
-playCasualBtn.addEventListener('click', () => {
-    setGameMode(GAME_MODE_CASUAL);
-    setActiveMenu(null);
-    resetGame();
-})
-
-/*****************************************************/
-
-
-
 const canvas = document.getElementById('canvas1');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
@@ -59,18 +10,72 @@ collisionCanvas.width = window.innerWidth;
 collisionCanvas.height = window.innerHeight;
 
 let score = 0;
-let gameOver = false;
 ctx.font = '50px Impact';
 
 let timeToNextRaven = 0;
-let ravenInterval = 500;
+let ravenInterval = 2000;
 let lastTime = 0;
 let ravens = [];
 let explosions = [];
 let particles = [];
+let isGamePause = false;
+let isGameOver = false;
+
+/*****************************************************/
+
+const playNormalBtn = document.getElementById('playNormal');
+const playCasualBtn = document.getElementById('playCasual');
+const menuMain = document.getElementById('menuMain');
+let gameMode = 'menuBg';
+
+playNormalBtn.addEventListener('click', () => {
+    const countdownNode = document.createElement('div');
+    countdownNode.classList.add('countdown');
+    const menus = document.getElementsByClassName('menus')[0];
+    menus.appendChild(countdownNode);
+    menuMain.classList.remove('active');
+    collisionCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles = [];
+    ravens = [];
+    explosions = [];
+    isGamePause = true;
+    setTimeout(function () {
+        countdownNode.remove();
+        gameMode = 'normal';
+        isGamePause = false;
+    }, 3000);
+});
+
+playCasualBtn.addEventListener('click', () => {
+    const countdownNode = document.createElement('div');
+    countdownNode.classList.add('countdown');
+    const menus = document.getElementsByClassName('menus')[0];
+    menus.appendChild(countdownNode);
+    menuMain.classList.remove('active');
+    collisionCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles = [];
+    ravens = [];
+    explosions = [];
+    isGamePause = true;
+    setTimeout(function () {
+        countdownNode.remove();
+        gameMode = 'casual';
+        isGamePause = false;
+    }, 3000);
+});
+
+animate(0, gameMode);
+
+/*****************************************************/
+
+
+
+
 
 class Raven {
-    constructor() {
+    constructor(gameMode) {
         this.spriteWidth = 271;
         this.spriteHeight = 194;
         this.sizeModifier = Math.random() * 0.6 + 0.4;
@@ -90,6 +95,8 @@ class Raven {
         this.randomColors = [Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255)];
         this.color = 'rgb(' + this.randomColors[0] + ',' + this.randomColors[1] + ',' + this.randomColors[2] + ')';
         this.hasTrail = Math.random() > 0.5;
+        this.gameMode = gameMode;
+        this.alpha = (gameMode === 'menuBg') ? 0.5 : 1;
     }
     update(deltaTime) {
         if (this.y < 0 || this.y > canvas.height - this.height) {
@@ -105,13 +112,16 @@ class Raven {
             this.timeSinceFlap = 0;
             if (this.hasTrail) {
                 for (let i = 0; i < 5; i++) {
-                    particles.push(new Particle(this.x, this.y, this.width, this.color));
+                    particles.push(new Particle(this.x, this.y, this.width, this.color, this.alpha));
                 }
             }
         }
-        if (this.x < 0 - this.width) gameOver = true;
+        if (this.x < 0 - this.width && gameMode === 'normal') {
+            isGameOver = true;
+        };
     }
     draw() {
+        ctx.globalAlpha = this.alpha;
         collisionCanvasCtx.fillStyle = this.color;
         collisionCanvasCtx.fillRect(this.x, this.y, this.width, this.height);
         ctx.drawImage(this.image, this.frame * this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, this.x, this.y, this.width, this.height);
@@ -175,58 +185,61 @@ class Particle {
     }
 }
 
-function drawScore() {
-    ctx.fillStyle = 'black';
-    ctx.fillText('Score: ' + score, 50, 75);
-    ctx.fillStyle = 'white';
-    ctx.fillText('Score: ' + score, 55, 80);
-}
+// function drawScore() {
+//     ctx.fillStyle = 'black';
+//     ctx.fillText('Score: ' + score, 50, 75);
+//     ctx.fillStyle = 'white';
+//     ctx.fillText('Score: ' + score, 55, 80);
+// }
 
-function drawGameOver() {
-    ctx.textAlign = 'center';
-    ctx.fillStyle = 'black';
-    ctx.fillText('GAME OVER, your score is ' + score, canvas.width / 2, canvas.height / 2);
-    ctx.fillStyle = 'white';
-    ctx.fillText('GAME OVER, your score is ' + score, canvas.width / 2, canvas.height / 2 + 5);
-}
+// function drawGameOver() {
+//     ctx.textAlign = 'center';
+//     ctx.fillStyle = 'black';
+//     ctx.fillText('GAME OVER, your score is ' + score, canvas.width / 2, canvas.height / 2);
+//     ctx.fillStyle = 'white';
+//     ctx.fillText('GAME OVER, your score is ' + score, canvas.width / 2, canvas.height / 2 + 5);
+// }
 
 window.addEventListener('click', function (e) {
-    const detectPixelColor = collisionCanvasCtx.getImageData(e.x, e.y, 1, 1);
-    const pc = detectPixelColor.data;
-    ravens.forEach(object => {
-        if (
-            object.randomColors[0] === pc[0] &&
-            object.randomColors[1] === pc[1] &&
-            object.randomColors[2] === pc[2]
-        ) {
-            object.markedForDeletion = true;
-            score++;
-            explosions.push(new Explosion(object.x, object.y, object.width));
-        }
-    });
+    if (gameMode !== 'menuBg') {
+        const detectPixelColor = collisionCanvasCtx.getImageData(e.x, e.y, 1, 1);
+        const pc = detectPixelColor.data;
+        ravens.forEach(object => {
+            if (
+                object.randomColors[0] === pc[0] &&
+                object.randomColors[1] === pc[1] &&
+                object.randomColors[2] === pc[2]
+            ) {
+                object.markedForDeletion = true;
+                score++;
+                explosions.push(new Explosion(object.x, object.y, object.width));
+            }
+        });
+    }
 })
 
 function animate(timeStamp) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    collisionCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-    let deltaTime = timeStamp - lastTime;
-    lastTime = timeStamp;
-    timeToNextRaven += deltaTime;
-    if (timeToNextRaven > ravenInterval) {
-        ravens.push(new Raven());
-        timeToNextRaven = 0;
-        ravens.sort(function (a, b) {
-            return a.width - b.width;
-        })
-    };
-    drawScore();
-    [...particles, ...ravens, ...explosions].forEach(object => object.update(deltaTime));
-    [...particles, ...ravens, ...explosions].forEach(object => object.draw());
-    ravens = ravens.filter(object => !object.markedForDeletion);
-    explosions = explosions.filter(object => !object.markedForDeletion);
-    particles = particles.filter(object => !object.markedForDeletion);
-    if (!gameOver) requestAnimationFrame(animate);
-    else drawGameOver();
+    if (!isGamePause && !isGameOver) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        collisionCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+        let deltaTime = timeStamp - lastTime;
+        lastTime = timeStamp;
+        timeToNextRaven += deltaTime;
+        if (timeToNextRaven > ravenInterval) {
+            ravens.push(new Raven(gameMode));
+            timeToNextRaven = 0;
+            ravens.sort(function (a, b) {
+                return a.width - b.width;
+            })
+        };
+        // drawScore();
+        [...particles, ...ravens, ...explosions].forEach(object => object.update(deltaTime));
+        [...particles, ...ravens, ...explosions].forEach(object => object.draw());
+        ravens = ravens.filter(object => !object.markedForDeletion);
+        explosions = explosions.filter(object => !object.markedForDeletion);
+        particles = particles.filter(object => !object.markedForDeletion);
+    }
+    requestAnimationFrame(animate)
+    // if (!gameOver) requestAnimationFrame(animate);
+    // else drawGameOver();
 }
-
-// animate(0);

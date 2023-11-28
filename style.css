@@ -1,5 +1,4 @@
 body {
-    /* background: linear-gradient(125deg, red, green, blue); */
     background: url('assets/background.jpg') no-repeat center;
     background-size: cover;
     width: 100vw;
@@ -40,10 +39,14 @@ h1 {
     left: 0;
     bottom: 0;
     right: 0;
-    display: flex;
+    display: none;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.active {
+    display: flex!important;
 }
 
 button {
@@ -88,4 +91,69 @@ button:hover::after {
     color: #fff;
     opacity: 0.9;
     bottom: 20px;
+    user-select: none;
+}
+
+/* Countdown */
+.countdown:before {
+    content: '321';
+    font-size: 5rem;
+    color: #fff;
+    font-weight: bold;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-family:monospace;
+    display:inline-block;
+    width:1ch;
+    overflow:hidden;
+    -webkit-animation:countdowns 3s steps(3) 1;
+    -moz-animation:countdowns 3s steps(3) 1;
+    animation:countdowns 3s steps(3) 1 forwards;
+}
+
+@-webkit-keyframes countdowns {
+    0% {text-indent:0}
+    100% {text-indent:-3ch;}
+}
+@-moz-keyframes countdowns {
+    0% {text-indent:0}
+    100% {text-indent:-3ch;}
+}
+@-o-keyframes countdowns {
+    0% {text-indent:0}
+    100% {text-indent:-3ch;}
+}
+@keyframes countdowns {
+    0% {text-indent:0}
+    100% {text-indent:-3ch;}
+}
+
+.pause-btn {
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 0.8em 0.65em;
+}
+
+.pause-btn>div {
+    position: relative;
+    width: 0.8em;
+    height: 0.8em;
+    opacity: 0.75;
+}
+
+.pause-btn>div::before,
+.pause-btn>div::after {
+    content: '';
+    display: block;
+    width: 34%;
+    height: 100%;
+    position: absolute;
+    background-color: #fff;
+}
+
+.pause-btn>div::after {
+    right: 0;
 }
