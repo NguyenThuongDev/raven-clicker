@@ -35,18 +35,26 @@ h1 {
 
 #menuMain {
     position: fixed;
+    display: flex;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
-    display: none;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-.active {
-    display: flex!important;
+#menuPause {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 button {
@@ -97,7 +105,7 @@ button:hover::after {
 /* Countdown */
 .countdown:before {
     content: '321';
-    font-size: 5rem;
+    font-size: 6rem;
     color: #fff;
     font-weight: bold;
     position: absolute;
@@ -130,11 +138,16 @@ button:hover::after {
     100% {text-indent:-3ch;}
 }
 
+.hud {
+    display: none;
+}
+
 .pause-btn {
     position: fixed;
     top: 0;
     right: 0;
     padding: 0.8em 0.65em;
+    font-size: calc(14px + 2vw + 1vh);
 }
 
 .pause-btn>div {

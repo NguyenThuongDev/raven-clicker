@@ -25,7 +25,11 @@ let isGameOver = false;
 
 const playNormalBtn = document.getElementById('playNormal');
 const playCasualBtn = document.getElementById('playCasual');
+const resumeBtn = document.getElementById('resumeBtn');
+const menuBtn = document.getElementById('menuBtn');
 const menuMain = document.getElementById('menuMain');
+const menuPause = document.getElementById('menuPause');
+const hudNode = document.getElementsByClassName('hud')[0];
 let gameMode = 'menuBg';
 
 playNormalBtn.addEventListener('click', () => {
@@ -33,7 +37,7 @@ playNormalBtn.addEventListener('click', () => {
     countdownNode.classList.add('countdown');
     const menus = document.getElementsByClassName('menus')[0];
     menus.appendChild(countdownNode);
-    menuMain.classList.remove('active');
+    menuMain.style.display = 'none';
     collisionCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     particles = [];
@@ -44,6 +48,7 @@ playNormalBtn.addEventListener('click', () => {
         countdownNode.remove();
         gameMode = 'normal';
         isGamePause = false;
+        hudNode.style.display = 'block';
     }, 3000);
 });
 
@@ -52,7 +57,7 @@ playCasualBtn.addEventListener('click', () => {
     countdownNode.classList.add('countdown');
     const menus = document.getElementsByClassName('menus')[0];
     menus.appendChild(countdownNode);
-    menuMain.classList.remove('active');
+    menuMain.style.display = 'none';
     collisionCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     particles = [];
@@ -63,7 +68,37 @@ playCasualBtn.addEventListener('click', () => {
         countdownNode.remove();
         gameMode = 'casual';
         isGamePause = false;
+        hudNode.style.display = 'block';
     }, 3000);
+});
+
+hudNode.addEventListener('click', () => {
+    if (isGamePause) {
+        isGamePause = false;
+        menuPause.style.display = 'none';
+    } else {
+        isGamePause = true;
+        menuPause.style.display = 'flex';
+    }
+});
+
+resumeBtn.addEventListener('click', () => {
+    isGamePause = false;
+    menuPause.style.display = 'none';
+});
+
+menuBtn.addEventListener('click', () => {
+    menuMain.style.display = 'flex';
+    menuPause.style.display = 'none';
+    hudNode.style.display = 'none';
+    collisionCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles = [];
+    ravens = [];
+    explosions = [];
+    gameMode = 'menuBg';
+    isGamePause = false;
+
 });
 
 animate(0, gameMode);
