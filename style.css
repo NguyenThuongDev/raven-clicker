@@ -142,12 +142,27 @@ button:hover::after {
     display: none;
 }
 
+.hud-score {
+    position: fixed;
+    top: 0.65em;
+    left: 0.65em;
+    pointer-events: none;
+    user-select: none;
+    color: #fff;
+    font-size: calc(14px + 2vw + 1vh);
+    font-weight: 700;
+}
+
+.raven-count-lbl {
+    font-size: 0.46em;
+}
+
 .pause-btn {
     position: fixed;
+    font-size: calc(14px + 2vw + 1vh);
     top: 0;
     right: 0;
     padding: 0.8em 0.65em;
-    font-size: calc(14px + 2vw + 1vh);
 }
 
 .pause-btn>div {

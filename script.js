@@ -10,6 +10,7 @@ collisionCanvas.width = window.innerWidth;
 collisionCanvas.height = window.innerHeight;
 
 let score = 0;
+let ravenClicked = 0;
 ctx.font = '50px Impact';
 
 let timeToNextRaven = 0;
@@ -43,6 +44,8 @@ playNormalBtn.addEventListener('click', () => {
     particles = [];
     ravens = [];
     explosions = [];
+    score = 0;
+    ravenClicked = 0;
     isGamePause = true;
     setTimeout(function () {
         countdownNode.remove();
@@ -63,6 +66,8 @@ playCasualBtn.addEventListener('click', () => {
     particles = [];
     ravens = [];
     explosions = [];
+    score = 0;
+    ravenClicked = 0;
     isGamePause = true;
     setTimeout(function () {
         countdownNode.remove();
@@ -220,20 +225,12 @@ class Particle {
     }
 }
 
-// function drawScore() {
-//     ctx.fillStyle = 'black';
-//     ctx.fillText('Score: ' + score, 50, 75);
-//     ctx.fillStyle = 'white';
-//     ctx.fillText('Score: ' + score, 55, 80);
-// }
-
-// function drawGameOver() {
-//     ctx.textAlign = 'center';
-//     ctx.fillStyle = 'black';
-//     ctx.fillText('GAME OVER, your score is ' + score, canvas.width / 2, canvas.height / 2);
-//     ctx.fillStyle = 'white';
-//     ctx.fillText('GAME OVER, your score is ' + score, canvas.width / 2, canvas.height / 2 + 5);
-// }
+function drawScore() {
+    const scoreStr = document.getElementsByClassName('score-lbl')[0];
+    const ravenCountStr = document.getElementsByClassName('raven-count-lbl')[0];
+    scoreStr.innerText = `Score: ${score}`;
+    ravenCountStr.innerText = `Ravens clicked: ${ravenClicked}`;
+}
 
 window.addEventListener('click', function (e) {
     if (gameMode !== 'menuBg') {
@@ -246,7 +243,8 @@ window.addEventListener('click', function (e) {
                 object.randomColors[2] === pc[2]
             ) {
                 object.markedForDeletion = true;
-                score++;
+                score += 10;
+                ravenClicked++;
                 explosions.push(new Explosion(object.x, object.y, object.width));
             }
         });
@@ -267,7 +265,7 @@ function animate(timeStamp) {
                 return a.width - b.width;
             })
         };
-        // drawScore();
+        drawScore();
         [...particles, ...ravens, ...explosions].forEach(object => object.update(deltaTime));
         [...particles, ...ravens, ...explosions].forEach(object => object.draw());
         ravens = ravens.filter(object => !object.markedForDeletion);
@@ -275,6 +273,4 @@ function animate(timeStamp) {
         particles = particles.filter(object => !object.markedForDeletion);
     }
     requestAnimationFrame(animate)
-    // if (!gameOver) requestAnimationFrame(animate);
-    // else drawGameOver();
 }
