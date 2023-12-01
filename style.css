@@ -57,6 +57,18 @@ h1 {
     align-items: center;
 }
 
+#menuGameOver {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 button {
     display: block;
     width: 200px;
@@ -151,6 +163,20 @@ button:hover::after {
     color: #fff;
     font-size: calc(14px + 2vw + 1vh);
     font-weight: 700;
+}
+
+.final-score {
+    font-size: calc(14px + 2vw + 1vh);
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 2px 2px #160e0e;
+    text-align: center;
+    margin-top: -0.8em;
+    margin-bottom: 0.8em;
+}
+
+#high-score-lbl {
+    font-size: 0.6em;
 }
 
 .raven-count-lbl {

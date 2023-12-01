@@ -24,35 +24,44 @@ let isGameOver = false;
 
 /*****************************************************/
 
-const playNormalBtn = document.getElementById('playNormal');
+const playNormalBtnList = document.getElementsByClassName('playNormal');
 const playCasualBtn = document.getElementById('playCasual');
+const playAgainBtn = document.getElementById('playAgainBtn');
 const resumeBtn = document.getElementById('resumeBtn');
-const menuBtn = document.getElementById('menuBtn');
+const menuBtnList = document.getElementsByClassName('menuBtn');
 const menuMain = document.getElementById('menuMain');
 const menuPause = document.getElementById('menuPause');
+const menuGameOver = document.getElementById('menuGameOver');
 const hudNode = document.getElementsByClassName('hud')[0];
 let gameMode = 'menuBg';
 
-playNormalBtn.addEventListener('click', () => {
-    const countdownNode = document.createElement('div');
-    countdownNode.classList.add('countdown');
-    const menus = document.getElementsByClassName('menus')[0];
-    menus.appendChild(countdownNode);
-    menuMain.style.display = 'none';
-    collisionCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles = [];
-    ravens = [];
-    explosions = [];
-    score = 0;
-    ravenClicked = 0;
-    isGamePause = true;
-    setTimeout(function () {
-        countdownNode.remove();
-        gameMode = 'normal';
-        isGamePause = false;
-        hudNode.style.display = 'block';
-    }, 3000);
+Array.prototype.forEach.call(playNormalBtnList, playNormalBtn => {
+    playNormalBtn.addEventListener('click', () => {
+        if (isGameOver) {
+            isGameOver = false;
+            menuGameOver.style.display = 'none';
+        };
+        const countdownNode = document.createElement('div');
+        countdownNode.classList.add('countdown');
+        const menus = document.getElementsByClassName('menus')[0];
+        menus.appendChild(countdownNode);
+        menuMain.style.display = 'none';
+        collisionCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles = [];
+        ravens = [];
+        explosions = [];
+        score = 0;
+        ravenClicked = 0;
+        isGamePause = true;
+        setTimeout(function () {
+            countdownNode.remove();
+            gameMode = 'normal';
+            isGamePause = false;
+            hudNode.style.display = 'block';
+            animate(0, gameMode);
+        }, 3000);
+    });
 });
 
 playCasualBtn.addEventListener('click', () => {
@@ -74,6 +83,7 @@ playCasualBtn.addEventListener('click', () => {
         gameMode = 'casual';
         isGamePause = false;
         hudNode.style.display = 'block';
+        animate(0, gameMode);
     }, 3000);
 });
 
@@ -81,6 +91,7 @@ hudNode.addEventListener('click', () => {
     if (isGamePause) {
         isGamePause = false;
         menuPause.style.display = 'none';
+        animate(0, gameMode);
     } else {
         isGamePause = true;
         menuPause.style.display = 'flex';
@@ -90,20 +101,27 @@ hudNode.addEventListener('click', () => {
 resumeBtn.addEventListener('click', () => {
     isGamePause = false;
     menuPause.style.display = 'none';
+    animate(0, gameMode);
 });
 
-menuBtn.addEventListener('click', () => {
-    menuMain.style.display = 'flex';
-    menuPause.style.display = 'none';
-    hudNode.style.display = 'none';
-    collisionCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles = [];
-    ravens = [];
-    explosions = [];
-    gameMode = 'menuBg';
-    isGamePause = false;
-
+Array.prototype.forEach.call(menuBtnList, menuBtn => {
+    menuBtn.addEventListener('click', () => {
+        menuMain.style.display = 'flex';
+        menuPause.style.display = 'none';
+        hudNode.style.display = 'none';
+        collisionCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles = [];
+        ravens = [];
+        explosions = [];
+        gameMode = 'menuBg';
+        if (isGamePause) isGamePause = false;
+        if (isGameOver) {
+            isGameOver = false;
+            menuGameOver.style.display = 'none';
+        }
+        animate(0, gameMode);
+    });
 });
 
 animate(0, gameMode);
@@ -226,10 +244,27 @@ class Particle {
 }
 
 function drawScore() {
-    const scoreStr = document.getElementsByClassName('score-lbl')[0];
-    const ravenCountStr = document.getElementsByClassName('raven-count-lbl')[0];
-    scoreStr.innerText = `Score: ${score}`;
-    ravenCountStr.innerText = `Ravens clicked: ${ravenClicked}`;
+    const scoreNodeList = document.getElementsByClassName('score-lbl');
+    const ravenCountNode = document.getElementsByClassName('raven-count-lbl')[0];
+    Array.prototype.forEach.call(scoreNodeList, scoreNode => {
+        scoreNode.innerText = `Score: ${score}`;
+    });
+    ravenCountNode.innerText = `Ravens clicked: ${ravenClicked}`;
+}
+
+function handleGameOver() {
+    menuGameOver.style.display = 'flex';
+    hudNode.style.display = 'none';
+    if (gameMode === 'normal') {
+        const highScoreNode = document.getElementById('high-score-lbl');
+        const highScore = window.localStorage.getItem('high_score');
+        if (score > highScore) {
+            highScoreNode.innerText = `High score: ${score}`;
+            window.localStorage.setItem('high_score', score);
+        } else {
+            highScoreNode.innerText = `High score: ${highScore}`;
+        }
+    }
 }
 
 window.addEventListener('click', function (e) {
@@ -252,6 +287,7 @@ window.addEventListener('click', function (e) {
 })
 
 function animate(timeStamp) {
+    console.log('a');
     if (!isGamePause && !isGameOver) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         collisionCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
@@ -271,6 +307,7 @@ function animate(timeStamp) {
         ravens = ravens.filter(object => !object.markedForDeletion);
         explosions = explosions.filter(object => !object.markedForDeletion);
         particles = particles.filter(object => !object.markedForDeletion);
+        requestAnimationFrame(animate);
     }
-    requestAnimationFrame(animate)
+    if (isGameOver) handleGameOver();
 }
