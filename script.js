@@ -1,13 +1,11 @@
 /** @type {HTMLCanvasElement} */
 
-const canvas = document.getElementById('canvas1');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+const canvas = document.getElementById('mainCanvas');
 const collisionCanvas = document.getElementById('collisionCanvas');
+const ctx = canvas.getContext('2d');
 const collisionCanvasCtx = collisionCanvas.getContext('2d');
-collisionCanvas.width = window.innerWidth;
-collisionCanvas.height = window.innerHeight;
+canvas.width = collisionCanvas.width = window.innerWidth;
+canvas.height = collisionCanvas.height = window.innerHeight;
 
 let score = 0;
 let ravenClicked = 0;
@@ -19,8 +17,7 @@ let explosions = [];
 let particles = [];
 let isGamePause = false;
 let isGameOver = false;
-
-/*****************************************************/
+let gameMode = 'menuBg'; // menuBg || normal || casual
 
 const playNormalBtnList = document.getElementsByClassName('playNormal');
 const playCasualBtn = document.getElementById('playCasual');
@@ -31,7 +28,28 @@ const menuMain = document.getElementById('menuMain');
 const menuPause = document.getElementById('menuPause');
 const menuGameOver = document.getElementById('menuGameOver');
 const hudNode = document.getElementsByClassName('hud')[0];
-let gameMode = 'menuBg';
+const menus = document.getElementsByClassName('menus')[0];
+
+function createCountdownNode(isCreate) {
+    const countdownNode = document.createElement('div');
+    if (isCreate) {
+        countdownNode.classList.add('countdown');
+        menus.appendChild(countdownNode);
+    } else {
+        countdownNode.remove();
+    };
+};
+
+function resetGame() {
+    collisionCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles = [];
+    ravens = [];
+    explosions = [];
+    score = 0;
+    ravenClicked = 0;
+    ravenInterval = 2000;
+};
 
 Array.prototype.forEach.call(playNormalBtnList, playNormalBtn => {
     playNormalBtn.addEventListener('click', () => {
@@ -39,22 +57,12 @@ Array.prototype.forEach.call(playNormalBtnList, playNormalBtn => {
             isGameOver = false;
             menuGameOver.style.display = 'none';
         };
-        const countdownNode = document.createElement('div');
-        countdownNode.classList.add('countdown');
-        const menus = document.getElementsByClassName('menus')[0];
-        menus.appendChild(countdownNode);
+        createCountdownNode(true);
         menuMain.style.display = 'none';
-        collisionCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles = [];
-        ravens = [];
-        explosions = [];
-        score = 0;
-        ravenClicked = 0;
-        ravenInterval = 2000;
+        resetGame();
         isGamePause = true;
         setTimeout(function () {
-            countdownNode.remove();
+            createCountdownNode(false);
             gameMode = 'normal';
             isGamePause = false;
             hudNode.style.display = 'block';
@@ -64,22 +72,12 @@ Array.prototype.forEach.call(playNormalBtnList, playNormalBtn => {
 });
 
 playCasualBtn.addEventListener('click', () => {
-    const countdownNode = document.createElement('div');
-    countdownNode.classList.add('countdown');
-    const menus = document.getElementsByClassName('menus')[0];
-    menus.appendChild(countdownNode);
+    createCountdownNode(true);
     menuMain.style.display = 'none';
-    collisionCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles = [];
-    ravens = [];
-    explosions = [];
-    score = 0;
-    ravenClicked = 0;
-    ravenInterval = 2000;
+    resetGame();
     isGamePause = true;
     setTimeout(function () {
-        countdownNode.remove();
+        createCountdownNode(false);
         gameMode = 'casual';
         isGamePause = false;
         hudNode.style.display = 'block';
@@ -109,13 +107,8 @@ Array.prototype.forEach.call(menuBtnList, menuBtn => {
         menuMain.style.display = 'flex';
         menuPause.style.display = 'none';
         hudNode.style.display = 'none';
-        collisionCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles = [];
-        ravens = [];
-        explosions = [];
         gameMode = 'menuBg';
-        ravenInterval = 2000;
+        resetGame();
         if (isGamePause) isGamePause = false;
         if (isGameOver) {
             isGameOver = false;
@@ -126,12 +119,6 @@ Array.prototype.forEach.call(menuBtnList, menuBtn => {
 });
 
 animate(0, gameMode);
-
-/*****************************************************/
-
-
-
-
 
 class Raven {
     constructor(gameMode) {
@@ -185,7 +172,7 @@ class Raven {
         collisionCanvasCtx.fillRect(this.x, this.y, this.width, this.height);
         ctx.drawImage(this.image, this.frame * this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, this.x, this.y, this.width, this.height);
     }
-}
+};
 
 class Explosion {
     constructor(x, y, size) {
@@ -215,7 +202,7 @@ class Explosion {
     draw() {
         ctx.drawImage(this.image, this.frame * this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, this.x, this.y - this.size / 4, this.size, this.size);
     }
-}
+};
 
 class Particle {
     constructor(x, y, size, color) {
@@ -242,7 +229,7 @@ class Particle {
         ctx.fill();
         ctx.restore();
     }
-}
+};
 
 function drawScore() {
     const scoreNodeList = document.getElementsByClassName('score-lbl');
@@ -251,7 +238,7 @@ function drawScore() {
         scoreNode.innerText = `Score: ${score}`;
     });
     ravenCountNode.innerText = `Ravens clicked: ${ravenClicked}`;
-}
+};
 
 function handleGameOver() {
     menuGameOver.style.display = 'flex';
@@ -266,7 +253,7 @@ function handleGameOver() {
             highScoreNode.innerText = `High score: ${highScore}`;
         }
     }
-}
+};
 
 window.addEventListener('click', function (e) {
     if (gameMode !== 'menuBg') {
@@ -285,7 +272,7 @@ window.addEventListener('click', function (e) {
             }
         });
     }
-})
+});
 
 function animate(timeStamp) {
     if (!isGamePause && !isGameOver) {
@@ -296,8 +283,11 @@ function animate(timeStamp) {
         timeToNextRaven += deltaTime;
         if (timeToNextRaven > ravenInterval) {
             ravens.push(new Raven(gameMode));
-            if (gameMode === 'normal' && ravenInterval > 300) {
-                ravenInterval -= Math.floor(Math.random() * 50);
+            if (gameMode === 'normal') {
+                if (ravenInterval > 800)
+                    ravenInterval -= Math.floor(Math.random() * 120);
+                if (ravenInterval < 801 && ravenInterval > 300)
+                    ravenInterval -= Math.floor(Math.random() * 20);
             }
             timeToNextRaven = 0;
             ravens.sort(function (a, b) {
@@ -313,4 +303,4 @@ function animate(timeStamp) {
         requestAnimationFrame(animate);
     }
     if (isGameOver) handleGameOver();
-}
+};

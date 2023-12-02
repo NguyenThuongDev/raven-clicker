@@ -166,7 +166,7 @@ button:hover::after {
 }
 
 .final-score {
-    font-size: calc(14px + 2vw + 1vh);
+    font-size: calc(8px + 2vw + 1vh);
     font-weight: 700;
     color: #fff;
     text-shadow: 2px 2px #160e0e;
@@ -176,7 +176,8 @@ button:hover::after {
 }
 
 #high-score-lbl {
-    font-size: 0.6em;
+    font-size: 0.5em;
+    margin-top: 0.6em;
 }
 
 .raven-count-lbl {
