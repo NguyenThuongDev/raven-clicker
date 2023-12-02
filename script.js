@@ -11,8 +11,6 @@ collisionCanvas.height = window.innerHeight;
 
 let score = 0;
 let ravenClicked = 0;
-ctx.font = '50px Impact';
-
 let timeToNextRaven = 0;
 let ravenInterval = 2000;
 let lastTime = 0;
@@ -53,6 +51,7 @@ Array.prototype.forEach.call(playNormalBtnList, playNormalBtn => {
         explosions = [];
         score = 0;
         ravenClicked = 0;
+        ravenInterval = 2000;
         isGamePause = true;
         setTimeout(function () {
             countdownNode.remove();
@@ -77,6 +76,7 @@ playCasualBtn.addEventListener('click', () => {
     explosions = [];
     score = 0;
     ravenClicked = 0;
+    ravenInterval = 2000;
     isGamePause = true;
     setTimeout(function () {
         countdownNode.remove();
@@ -115,6 +115,7 @@ Array.prototype.forEach.call(menuBtnList, menuBtn => {
         ravens = [];
         explosions = [];
         gameMode = 'menuBg';
+        ravenInterval = 2000;
         if (isGamePause) isGamePause = false;
         if (isGameOver) {
             isGameOver = false;
@@ -154,7 +155,7 @@ class Raven {
         this.color = 'rgb(' + this.randomColors[0] + ',' + this.randomColors[1] + ',' + this.randomColors[2] + ')';
         this.hasTrail = Math.random() > 0.5;
         this.gameMode = gameMode;
-        this.alpha = (gameMode === 'menuBg') ? 0.5 : 1;
+        this.alpha = (gameMode === 'menuBg') ? 0.7 : 1;
     }
     update(deltaTime) {
         if (this.y < 0 || this.y > canvas.height - this.height) {
@@ -287,7 +288,6 @@ window.addEventListener('click', function (e) {
 })
 
 function animate(timeStamp) {
-    console.log('a');
     if (!isGamePause && !isGameOver) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         collisionCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
@@ -296,6 +296,9 @@ function animate(timeStamp) {
         timeToNextRaven += deltaTime;
         if (timeToNextRaven > ravenInterval) {
             ravens.push(new Raven(gameMode));
+            if (gameMode === 'normal' && ravenInterval > 300) {
+                ravenInterval -= Math.floor(Math.random() * 50);
+            }
             timeToNextRaven = 0;
             ravens.sort(function (a, b) {
                 return a.width - b.width;
