@@ -7,8 +7,13 @@ A clicker game is written in vanilla javascript based on [freeCodeCamp.org tutor
 The player needs to click to destroy the crows flying from the right to the left of the screen.
 
 ## Screenshots
-![raven-clicker-1](https://github.com/NguyenThuongDev/raven-clicker/assets/115036846/c3bcd8c8-52b7-4913-9a3d-c8fb40b1a15d)
-![raven-clicker-2](https://github.com/NguyenThuongDev/raven-clicker/assets/115036846/8a129e90-6f0a-4823-8421-631374cbd578)
+
+<p align="center">
+  <img alt="raven-clicker-1" src="https://github.com/NguyenThuongDev/raven-clicker/assets/115036846/c3bcd8c8-52b7-4913-9a3d-c8fb40b1a15d" width="80%">
+</p>
+<p align="center">
+  <img alt="raven-clicker-2" src="https://github.com/NguyenThuongDev/raven-clicker/assets/115036846/8a129e90-6f0a-4823-8421-631374cbd578" width="80%">
+</p>
 
 ## Dev
 ### Theories
