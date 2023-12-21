@@ -3,7 +3,13 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- The width and height are equal to the width and height of the device, does not allow users to enlarge the screen, the initial zoom is 100%, maximum scale is 100%. -->
+    <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no, initial-scale=1.0, maximum-scale=1.0">
+    <!-- Since Chrome31+, home screen web apps are also supported on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <!-- Apple-specific meta tag keys, https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <title>Raven Clicker</title>
     <link rel="stylesheet" href="style.css">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -17,44 +23,66 @@
 
 <body>
     <!-- Game canvas -->
-    <canvas id="collisionCanvas"></canvas>
-    <canvas id="mainCanvas"></canvas>
+    <canvas id="main-canvas"></canvas>
+    <canvas id="collision-canvas"></canvas>
 
     <!-- Menu system -->
-    <div class="menus">
-        <div class="menu" id="menuMain">
-            <h1>RAVEN CLICKER</h1>
-            <button type="button" class="playNormal">PLAY GAME</button>
-            <button type="button" id="playCasual">CASUAL MODE</button>
+    <div id="menu-list">
+        <div id="menu-background" class="to-right">
+            <img src="/images/menu-background.png" alt="menu background">
+        </div>
+        <div class="menu" id="menu-main">
+            <h1 id="logo" class="to-bottom">RAVEN CLICKER</h1>
+            <button type="button" id="play-game" class="play rotate">PLAY NORMAL</button>
+            <button type="button" id="time-challenge" class="play rotate">TIME CHALLENGE</button>
+            <div class="double-btn">
+                <button type="button" id="setting" class="rotate">SETTINGS</button>
+                <button type="button" id="setting" class="rotate">CREDITS</button>
+            </div>
             <p class="credits">__developed by ThuongNguyen</p>
         </div>
-        <div class="menu" id="menuPause">
+        <div class="menu" id="menu-pause">
             <h1>Paused</h1>
-            <button type="button" id="resumeBtn">RESUME GAME</button>
-            <button type="button" class="menuBtn">MAIN MENU</button>
+            <button type="button" id="resume-game" class="pause-btn-list">RESUME</button>
+            <button type="button" class="menu-btn">MENU</button>
         </div>
-        <div class="menu" id="menuGameOver">
+        <div class="menu" id="menu-over">
             <h1>Game Over</h1>
             <div class="final-score">
-                <div class="score-lbl"></div>
-                <div id="high-score-lbl"></div>
+                <div id="score-over"></div>
+                <div id="high-score-over"></div>
             </div>
-            <button type="button" class="playNormal">PLAY AGAIN</button>
-            <button type="button" class="menuBtn">MAIN MENU</button>
+            <button type="button" class="play">PLAY AGAIN</button>
+            <button type="button" class="menu-btn">MENU</button>
+        </div>
+    </div>
+
+    <!-- Credits  -->
+    <div id="credits">
+        <h2>Credits</h2>
+        <div class="credit-info">
+            <p>Programmer</p>
+            <p>Thuong Nguyen</p>
+            <p>Music</p>
+            <p>Sebastian Schwamm</p>
+            <p>Special thanks to</p>
+            <p>https://craftpix.net</p>
         </div>
     </div>
 
     <!-- Gameplay HUD -->
-    <div class="hud">
-        <div class="hud-score">
-            <div class="score-lbl"></div>
-            <div class="raven-count-lbl"></div>
+    <div id="hud">
+        <div id="hud-score">
+            <div id="score-lbl"></div>
+            <div id="raven-count-lbl"></div>
+            <div id="time-left"></div>
         </div>
-        <div class="pause-btn">
+        <div id="pause-btn" class="pause-btn-list">
             <div></div>
         </div>
     </div>
-    <script src="script.js"></script>
+
+    <script type="module" src="scripts/main.js"></script>
 </body>
 
 </html>

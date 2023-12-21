@@ -1,6 +1,9 @@
+@font-face {
+    font-family: HalloweenSlime;
+    src: url("./fonts/halloween-slime.otf") format("opentype");
+}
+
 body {
-    background: url('assets/background.jpg') no-repeat center;
-    background-size: cover;
     width: 100vw;
     height: 100vh;
     margin: 0;
@@ -11,29 +14,45 @@ canvas {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    bottom: 0;
+    right: 0;
 }
 
-h1 {
-    font-size: 4rem;
-    line-height: 0.95;
-    text-align: center;
-    font-weight: bold;
-    font-family: monospace;
-    margin: 0 0.65em 1em;
-    pointer-events: none;
-    user-select: none;
-    color: #fff;
-    opacity: 0.9;
-    text-shadow: 2px 5px #160e0e;
-}
-
-#collisionCanvas {
+#collision-canvas {
     opacity: 0;
 }
 
-#menuMain {
+h1 {
+    font-size: 6rem;
+    line-height: 0.95;
+    text-align: center;
+    font-weight: bold;
+    font-family: HalloweenSlime;
+    letter-spacing: 4px;
+    margin: -1.5em 0.65em 0.3em;
+    pointer-events: none;
+    user-select: none;
+    color: #fff;
+    text-shadow: -3px 8px #940404, 2px 2px 0 #000, -3px 12px 12px #000;
+}
+
+#menu-background {
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    transform: translateX(-120px);
+}
+
+#menu-background>img{
+    width: 40%;
+    display: block;
+    user-select: none;
+    pointer-events: none;
+}
+
+#menu-main {
     position: fixed;
     display: flex;
     top: 0;
@@ -43,9 +62,11 @@ h1 {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 10px;
+    z-index: 1;
 }
 
-#menuPause {
+#menu-pause {
     display: none;
     position: fixed;
     top: 0;
@@ -55,9 +76,10 @@ h1 {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 10px;
 }
 
-#menuGameOver {
+#menu-over {
     display: none;
     position: fixed;
     top: 0;
@@ -67,42 +89,128 @@ h1 {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 10px;
+    z-index: 1;
 }
 
 button {
     display: block;
-    width: 200px;
+    margin-left: 200px;
+    width: 260px;
     padding: 12px 20px;
-    background: transparent;
     position: relative;
-    border: none;
     font-weight: bold;
     font-size: 1.5rem;
     font-family: monospace;
+    border: none;
     color: #fff;
-    opacity: 0.75;
+    background-color: transparent;
     text-shadow: 2px 2px #160e0e;
 }
 
+.double-btn {
+    display: flex;
+    margin-left: 200px;
+    gap: 10px;
+}
+
+.double-btn>button {
+    width: 125px;
+    margin-left: 0;
+    font-size: 1.2rem;
+}
+
+/* animation */
+@keyframes to-bottom {
+    0% {
+        opacity: 0;
+        transform: translateY(-100px);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@keyframes rotate {
+    0% {
+        opacity: 0;
+        transform: rotate(75deg);
+    }
+    100% {
+        opacity: 1;
+        transform: rotate(0);
+    }
+}
+@keyframes to-right {
+    0% {
+        opacity: 0;
+        transform: translateX(-360px);
+    }
+    50% {
+        opacity: 1;
+        transform: translateX(-120px);
+    }
+}
+@keyframes fade-out {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+@keyframes flicker {
+    50% {
+        opacity: 1;
+    }
+}
+/* animation class */
+.rotate {
+    animation: rotate 2s 1s forwards;
+    opacity: 0;
+}
+
+.to-right {
+    animation: to-right 3s;
+}
+
+.to-bottom {
+    animation: to-bottom 3s forwards; 
+}
+
+.fade-out {
+    animation: fade-out 1s forwards;
+}
+
+.fade-in {
+    animation: fade-in 1s forwards;
+}
+
+/* animation class */
+
 button::after {
     content: '';
+    background-image: url('/images/btn-v01.png');
+    border-radius: 10px;
     position: absolute;
+    box-shadow: 2px 2px 3px black;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: rgba(255, 255, 255, 0.25);
-    transform: scale(0, 0);
-    opacity: 0;
-    transition: opacity 0.3s, transform 0.3s;
-}
-
-button:hover {
-    opacity: 1;
+    z-index: -1;
+    opacity: 0.8;
 }
 
 button:hover::after {
-    transform: scale(1, 1);
     opacity: 1;
 }
 
@@ -114,77 +222,35 @@ button:hover::after {
     user-select: none;
 }
 
-/* Countdown */
-.countdown:before {
-    content: '321';
+.round {
     font-size: 6rem;
     color: #fff;
-    font-weight: bold;
     position: absolute;
     left: 50%;
-    top: 50%;
+    top: 40%;
+    font-family: HalloweenSlime;
     transform: translate(-50%, -50%);
-    font-family:monospace;
-    display:inline-block;
-    width:1ch;
-    overflow:hidden;
-    -webkit-animation:countdowns 3s steps(3) 1;
-    -moz-animation:countdowns 3s steps(3) 1;
-    animation:countdowns 3s steps(3) 1 forwards;
+    opacity: 0;
+    animation: flicker 3s;
+    text-shadow: -3px 8px #940404, 2px 2px 0 #000, -3px 12px 12px #000;
 }
 
-@-webkit-keyframes countdowns {
-    0% {text-indent:0}
-    100% {text-indent:-3ch;}
-}
-@-moz-keyframes countdowns {
-    0% {text-indent:0}
-    100% {text-indent:-3ch;}
-}
-@-o-keyframes countdowns {
-    0% {text-indent:0}
-    100% {text-indent:-3ch;}
-}
-@keyframes countdowns {
-    0% {text-indent:0}
-    100% {text-indent:-3ch;}
-}
-
-.hud {
+#hud {
     display: none;
 }
 
-.hud-score {
+#hud-score {
     position: fixed;
     top: 0.65em;
     left: 0.65em;
     pointer-events: none;
     user-select: none;
     color: #fff;
-    font-size: calc(14px + 2vw + 1vh);
+    font-size: calc(14px + 1vw + 1vh);
     font-weight: 700;
 }
 
-.final-score {
-    font-size: calc(8px + 2vw + 1vh);
-    font-weight: 700;
-    color: #fff;
-    text-shadow: 2px 2px #160e0e;
-    text-align: center;
-    margin-top: -0.8em;
-    margin-bottom: 0.8em;
-}
-
-#high-score-lbl {
-    font-size: 0.5em;
-    margin-top: 0.6em;
-}
-
-.raven-count-lbl {
-    font-size: 0.46em;
-}
-
-.pause-btn {
+#pause-btn {
     position: fixed;
     font-size: calc(14px + 2vw + 1vh);
     top: 0;
@@ -192,15 +258,15 @@ button:hover::after {
     padding: 0.8em 0.65em;
 }
 
-.pause-btn>div {
+#pause-btn>div {
     position: relative;
     width: 0.8em;
     height: 0.8em;
     opacity: 0.75;
 }
 
-.pause-btn>div::before,
-.pause-btn>div::after {
+#pause-btn>div::before,
+#pause-btn>div::after {
     content: '';
     display: block;
     width: 34%;
@@ -209,6 +275,85 @@ button:hover::after {
     background-color: #fff;
 }
 
-.pause-btn>div::after {
+#pause-btn>div::after {
     right: 0;
+}
+
+.final-score {
+    font-size: calc(8px + 1.5vw + 0.5vh);
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 2px 2px #160e0e;
+    text-align: center;
+    margin-top: -0.8em;
+    margin-bottom: 0.8em;
+    position: relative;
+}
+
+.final-score>div {
+    background-color: #ceb00a;
+    padding: 4px;
+    border-radius: 3px;
+    user-select: none;
+}
+
+#high-score-over {
+    margin-top: 0.5em;
+}
+
+#new-score {
+    background: url('/images/new.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: absolute;
+    width: 125px;
+    height: 50px;
+    right: -50%;
+    bottom: 0;
+    transform: rotate(-40deg);
+}
+
+#fireworks {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 0;
+}
+
+#credits {
+    display: none;
+    width: 80vw;
+    height: 80vh;
+    position: absolute;
+    top: 10vh;
+    right: 10vw;
+    z-index: 2;
+    border-radius: 12px;
+    background-color: #000;
+}
+
+#credits>h2 {
+    color: #ff0;
+    text-align: center;
+    padding-top: 7vh;
+    padding-bottom: 1vh;
+    font-family: HalloweenSlime;
+    font-size: 2rem;
+}
+
+.credit-info {
+    text-align: center;
+}
+
+.credit-info p:nth-child(2n+1) {
+    color: #ff0;
+    font-weight: 700;
+}
+
+.credit-info p:nth-child(2n) {
+    color: #fff;
+    margin-bottom: 50px;
 }
